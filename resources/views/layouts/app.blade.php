@@ -405,6 +405,12 @@
             color: #842029;
         }
 
+        .alert-toast.alert-info {
+            background-color: #F0F4F8;
+            border: 1px solid #D0DCE5;
+            color: #1A365D;
+        }
+
         /* Footer */
         .site-footer {
             background-color: #111111;
@@ -470,6 +476,13 @@
                 justify-content: space-between;
                 align-items: center;
             }
+        }        /* Scroll Anchor Margin for Sticky Header */
+        html {
+            scroll-padding-top: 5.5rem;
+        }
+
+        section[id] {
+            scroll-margin-top: 5.5rem;
         }
 
         /* SVG Icons */
@@ -530,6 +543,17 @@
                                 <span class="profile-email">{{ auth()->user()->email }}</span>
                             </div>
                             <div class="profile-dropdown-divider"></div>
+                            <a href="{{ route('orders.index') }}" class="profile-dropdown-item" id="link-my-orders" style="color: #141414; font-weight: 500;">
+                                <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 0.5rem; opacity: 0.7;">
+                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                    <polyline points="14 2 14 8 20 8"></polyline>
+                                    <line x1="16" y1="13" x2="8" y2="13"></line>
+                                    <line x1="16" y1="17" x2="8" y2="17"></line>
+                                    <polyline points="10 9 9 9 8 9"></polyline>
+                                </svg>
+                                My Orders
+                            </a>
+                            <div class="profile-dropdown-divider"></div>
                             @if(auth()->user()->isAdmin())
                                 <a href="{{ route('admin.dashboard') }}" class="profile-dropdown-item" id="link-admin-dashboard" style="color: #141414; font-weight: 500;">
                                     <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 0.5rem; opacity: 0.7;">
@@ -567,7 +591,7 @@
                 <!-- Shopping Cart Button -->
                 <a href="{{ route('cart.index') }}" class="nav-cart-btn" id="nav-cart-btn" aria-label="Shopping Cart">
                     <svg class="icon cart-icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+                        <path d="M6 2L3 6v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V6l-3-4z"></path>
                         <line x1="3" y1="6" x2="21" y2="6"></line>
                         <path d="M16 10a4 4 0 0 1-8 0"></path>
                     </svg>
@@ -592,6 +616,10 @@
                 <a href="{{ route('cart.index') }}" class="mobile-nav-link" id="mobile-nav-cart">Shopping Cart ({{ $cartItemCount }})</a>
                 <a href="{{ route('home') }}#story" class="mobile-nav-link" id="mobile-nav-story">Story</a>
                 @auth
+                    <a href="{{ route('orders.index') }}" class="mobile-nav-link" id="mobile-nav-orders">My Orders</a>
+                    @if(auth()->user()->isAdmin())
+                        <a href="{{ route('admin.dashboard') }}" class="mobile-nav-link" id="mobile-nav-admin">Admin Dashboard</a>
+                    @endif
                     <form action="{{ route('logout') }}" method="POST" style="margin-top: 0.5rem;">
                         @csrf
                         <button type="submit" class="mobile-nav-link" style="width: 100%; text-align: left; background: none; border: none; cursor: pointer;">
@@ -607,21 +635,30 @@
 
     <!-- Main Content Area -->
     <main style="padding-top: 5rem;">
-        <div class="container-custom" style="padding-top: 1.5rem;">
-            @if(session('success'))
-                <div class="alert-toast alert-success" id="flash-success">
-                    <span>{{ session('success') }}</span>
-                    <button type="button" onclick="this.parentElement.remove()" style="font-size: 1.25rem; line-height: 1; color: inherit;">&times;</button>
-                </div>
-            @endif
+        @if(session('success') || session('error') || session('info'))
+            <div class="container-custom" style="padding-top: 1.5rem;">
+                @if(session('success'))
+                    <div class="alert-toast alert-success" id="flash-success">
+                        <span>{{ session('success') }}</span>
+                        <button type="button" onclick="this.parentElement.remove()" style="font-size: 1.25rem; line-height: 1; color: inherit;">&times;</button>
+                    </div>
+                @endif
 
-            @if(session('error'))
-                <div class="alert-toast alert-error" id="flash-error">
-                    <span>{{ session('error') }}</span>
-                    <button type="button" onclick="this.parentElement.remove()" style="font-size: 1.25rem; line-height: 1; color: inherit;">&times;</button>
-                </div>
-            @endif
-        </div>
+                @if(session('error'))
+                    <div class="alert-toast alert-error" id="flash-error">
+                        <span>{{ session('error') }}</span>
+                        <button type="button" onclick="this.parentElement.remove()" style="font-size: 1.25rem; line-height: 1; color: inherit;">&times;</button>
+                    </div>
+                @endif
+
+                @if(session('info'))
+                    <div class="alert-toast alert-info" id="flash-info">
+                        <span>{{ session('info') }}</span>
+                        <button type="button" onclick="this.parentElement.remove()" style="font-size: 1.25rem; line-height: 1; color: inherit;">&times;</button>
+                    </div>
+                @endif
+            </div>
+        @endif
 
         @yield('content')
     </main>

@@ -166,7 +166,7 @@ class ProductCatalogTest extends TestCase
         $response = $this->get(route('home'));
         $response->assertStatus(200);
         $response->assertSee('Alexa');
-        $response->assertSee('Refined hydration for considered daily routines.');
+        $response->assertSee('Designed to go wherever the day takes you.');
         $response->assertSee('Alexa Core');
         $response->assertSee('Alexa Active');
         $response->assertSee('Alexa Trek');

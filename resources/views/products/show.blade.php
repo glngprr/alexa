@@ -41,19 +41,33 @@
 
     .gallery-container {
         position: relative;
-        background-color: var(--color-surface);
-        aspect-ratio: 1 / 1;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: 3rem;
+        background-color: transparent;
+        aspect-ratio: 4 / 5;
         overflow: hidden;
+        display: block;
+        max-width: 540px;
+        width: 100%;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    @media (min-width: 900px) {
+        .gallery-container {
+            max-width: none;
+            margin: 0;
+        }
     }
 
     .gallery-image {
         width: 100%;
         height: 100%;
         object-fit: contain;
+        object-position: center center;
+        display: block;
+        /* Calibrated 1.18x scale and 3.5% vertical offset to trim studio whitespace
+           while preserving complete bottle caps/handles, bases, and cast shadows */
+        transform: scale(1.18) translateY(3.5%);
+        transform-origin: center center;
         transition: opacity 0.3s ease, transform 0.4s ease;
     }
 

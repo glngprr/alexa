@@ -38,6 +38,21 @@
                 Sign In
             </button>
         </form>
+
+        <div style="display: flex; align-items: center; gap: 1rem; margin-top: 2rem; margin-bottom: 1.5rem;">
+            <div style="flex: 1; height: 1px; background: var(--color-border);"></div>
+            <span style="font-size: 0.75rem; color: var(--color-text-subtle); text-transform: uppercase; letter-spacing: 0.08em;">or</span>
+            <div style="flex: 1; height: 1px; background: var(--color-border);"></div>
+        </div>
+
+        <p style="text-align: center; font-size: 0.8125rem; color: var(--color-text-muted);">
+            New to Alexa?
+            <a href="{{ route('register') }}" id="link-create-account"
+               style="color: var(--color-text-main); font-weight: 500; text-decoration: underline; text-underline-offset: 3px;">
+                Create an Account
+            </a>
+        </p>
     </div>
 </div>
 @endsection
+

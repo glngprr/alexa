@@ -143,26 +143,18 @@
     }
 </style>
 @endpush
-
 @section('content')
 <div class="container-custom" style="padding-top: 2.5rem; padding-bottom: 7rem;">
-    @if(session('success'))
-        <div class="alert-banner alert-banner-success">
-            {{ session('success') }}
-        </div>
-    @endif
 
-    @if(session('error'))
-        <div class="alert-banner alert-banner-error">
-            {{ session('error') }}
-        </div>
-    @endif
+    <!-- Breadcrumb -->
+    <nav class="breadcrumb-nav" aria-label="Breadcrumb" style="display: flex; gap: 0.5rem; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.12em; color: var(--color-text-subtle); margin-bottom: 2.5rem;">
 
-    @if(session('info'))
-        <div class="alert-banner alert-banner-info">
-            {{ session('info') }}
-        </div>
-    @endif
+        <a href="{{ route('home') }}" style="color: var(--color-text-muted);">Home</a>
+        <span>/</span>
+        <a href="{{ route('orders.index') }}" style="color: var(--color-text-muted);">My Orders</a>
+        <span>/</span>
+        <span style="color: var(--color-text-main);">{{ $order->order_number }}</span>
+    </nav>
 
     <!-- Confirmation Banner -->
     <div style="margin-bottom: 3.5rem; text-align: left;">
@@ -359,9 +351,12 @@
                 @endif
             </div>
 
-            <div style="margin-top: 1rem;">
+            <div style="margin-top: 1rem; display: flex; gap: 1rem; flex-wrap: wrap;">
+                <a href="{{ route('orders.index') }}" class="btn-editorial btn-editorial-outline" id="btn-back-to-orders">
+                    &larr; View All My Orders
+                </a>
                 <a href="{{ route('products.index') }}" class="btn-editorial btn-editorial-outline" id="btn-continue-shopping">
-                    &larr; Continue Exploring Products
+                    Explore Collection &rarr;
                 </a>
             </div>
         </div>

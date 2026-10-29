@@ -4,13 +4,17 @@ use App\Http\Controllers\Admin\ShipmentController as AdminShipmentController;
 use App\Http\Controllers\Customer\CartController;
 use App\Http\Controllers\Customer\CheckoutController;
 use App\Http\Controllers\Customer\HomeController;
+use App\Http\Controllers\Customer\OrderController;
 use App\Http\Controllers\Customer\PaymentController;
 use App\Http\Controllers\Customer\ProductController;
 use App\Http\Controllers\Customer\TrackingController;
 use App\Http\Controllers\Webhook\MidtransWebhookController;
 use Illuminate\Http\Request;
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Validation\Rules\Password;
 
 // Public Catalog Routes
 Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -28,7 +32,8 @@ Route::middleware('auth')->group(function () {
     Route::patch('/cart/items/{cartItem}', [CartController::class, 'update'])->name('cart.items.update');
     Route::delete('/cart/items/{cartItem}', [CartController::class, 'destroy'])->name('cart.items.destroy');
 
-    // Checkout & Order Creation
+    // Customer Order History & Checkout
+    Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
     Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
     Route::post('/checkout', [CheckoutController::class, 'store'])->name('checkout.store');
     Route::get('/orders/{order}', [CheckoutController::class, 'show'])->name('orders.show');
@@ -78,7 +83,7 @@ Route::post('/login', function (Request $request) {
 
     if (Auth::attempt($credentials)) {
         $request->session()->regenerate();
-        return redirect()->intended(route('cart.index'));
+        return redirect()->intended(route('products.index'));
     }
 
     return back()->withErrors([
@@ -92,3 +97,30 @@ Route::post('/logout', function (Request $request) {
     $request->session()->regenerateToken();
     return redirect()->route('home');
 })->name('logout');
+
+Route::get('/register', function () {
+    if (Auth::check()) {
+        return redirect()->route('home');
+    }
+    return view('auth.register');
+})->name('register');
+
+Route::post('/register', function (Request $request) {
+    $validated = $request->validate([
+        'name'     => ['required', 'string', 'max:255'],
+        'email'    => ['required', 'string', 'email', 'max:255', 'unique:users'],
+        'password' => ['required', 'confirmed', Password::min(8)->mixedCase()->numbers()],
+    ]);
+
+    $user = User::create([
+        'name'     => $validated['name'],
+        'email'    => $validated['email'],
+        'password' => Hash::make($validated['password']),
+        'is_admin' => false,
+    ]);
+
+    Auth::login($user);
+    $request->session()->regenerate();
+
+    return redirect()->route('products.index')->with('success', 'Welcome to Alexa, ' . $user->name . '!');
+})->name('register.post');
