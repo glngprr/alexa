@@ -156,7 +156,7 @@
                     <span style="font-size: 0.75rem; color: var(--color-text-subtle); display: block; margin-top: 0.25rem;">
                         Or specify an asset path:
                     </span>
-                    <input type="text" name="image" value="{{ old('image', 'images/products/core-midnight.png') }}" class="form-input" style="margin-top: 0.25rem;">
+                    <input type="text" name="image" value="{{ old('image', 'images/products/core-forma-midnight.png') }}" class="form-input" style="margin-top: 0.25rem;">
                 </div>
             </div>
         </div>

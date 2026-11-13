@@ -29,7 +29,7 @@ class ProductVariantController extends Controller
             'image_file' => ['nullable', 'image', 'max:4096'],
         ]);
 
-        $imagePath = $validated['image'] ?? 'images/products/core-midnight.png';
+        $imagePath = $validated['image'] ?? 'images/products/core-forma-midnight.png';
         if ($request->hasFile('image_file')) {
             $file = $request->file('image_file');
             $fileName = time() . '_' . Str::slug($validated['sku']) . '.' . $file->getClientOriginalExtension();

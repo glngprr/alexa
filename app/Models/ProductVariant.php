@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class ProductVariant extends Model
 {
@@ -55,6 +56,14 @@ class ProductVariant extends Model
     public function cartItems(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(CartItem::class);
+    }
+
+    /**
+     * Get the order items for the variant.
+     */
+    public function orderItems(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(OrderItem::class);
     }
 
     /**

@@ -682,9 +682,15 @@
         </div>
 
         @php
-            $coreProduct = $products->firstWhere('slug', 'alexa-core');
-            $activeProduct = $products->firstWhere('slug', 'alexa-active');
-            $trekProduct = $products->firstWhere('slug', 'alexa-trek');
+            $coreProduct = $products->firstWhere('slug', 'alexa-forma')
+                ?? $products->firstWhere('slug', 'alexa-core')
+                ?? $products->firstWhere('collection.slug', 'alexa-core');
+            $activeProduct = $products->firstWhere('slug', 'alexa-flow')
+                ?? $products->firstWhere('slug', 'alexa-active')
+                ?? $products->firstWhere('collection.slug', 'alexa-active');
+            $trekProduct = $products->firstWhere('slug', 'alexa-rover')
+                ?? $products->firstWhere('slug', 'alexa-trek')
+                ?? $products->firstWhere('collection.slug', 'alexa-trek');
 
             $corePrice = $coreProduct?->variants->where('status', 'active')->min('price') ?? 899000;
             $activePrice = $activeProduct?->variants->where('status', 'active')->min('price') ?? 1099000;

@@ -56,7 +56,7 @@ class CheckoutTest extends TestCase
     {
         $user = User::factory()->create();
         $cart = Cart::create(['user_id' => $user->id]);
-        $variant = ProductVariant::where('sku', 'ALX-CORE-MID')->first();
+        $variant = ProductVariant::where('sku', 'ALX-FRM-MID')->first();
         CartItem::create([
             'cart_id' => $cart->id,
             'product_variant_id' => $variant->id,
@@ -127,8 +127,8 @@ class CheckoutTest extends TestCase
     {
         $user = User::factory()->create();
         $cart = Cart::create(['user_id' => $user->id]);
-        $variant1 = ProductVariant::where('sku', 'ALX-CORE-MID')->first();
-        $variant2 = ProductVariant::where('sku', 'ALX-ACT-SNW')->first();
+        $variant1 = ProductVariant::where('sku', 'ALX-FRM-MID')->first();
+        $variant2 = ProductVariant::where('sku', 'ALX-FLW-SNW')->first();
 
         $initialStock1 = $variant1->stock; // 25
         $initialStock2 = $variant2->stock; // 20
@@ -208,7 +208,7 @@ class CheckoutTest extends TestCase
     {
         $user = User::factory()->create();
         $cart = Cart::create(['user_id' => $user->id]);
-        $variant = ProductVariant::where('sku', 'ALX-CORE-MID')->first();
+        $variant = ProductVariant::where('sku', 'ALX-FRM-MID')->first();
         $variant->update(['stock' => 2]);
 
         // Cart quantity exceeds stock
@@ -243,7 +243,7 @@ class CheckoutTest extends TestCase
     {
         $user = User::factory()->create();
         $cart = Cart::create(['user_id' => $user->id]);
-        $variant = ProductVariant::where('sku', 'ALX-CORE-MID')->first();
+        $variant = ProductVariant::where('sku', 'ALX-FRM-MID')->first();
         $variant->update(['status' => 'inactive']);
 
         CartItem::create([

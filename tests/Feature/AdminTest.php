@@ -221,7 +221,7 @@ class AdminTest extends TestCase
             'sku' => 'ALX-AER-PRL',
             'price' => 750000,
             'stock' => 15,
-            'image' => 'images/products/core-ivory.png',
+            'image' => 'images/products/core-forma-ivory.png',
         ]);
 
         $createResponse->assertRedirect(route('admin.products.index'));
@@ -248,7 +248,7 @@ class AdminTest extends TestCase
             'price' => 750000,
             'stock' => 25,
             'status' => 'active',
-            'image' => 'images/products/core-midnight.png',
+            'image' => 'images/products/core-forma-midnight.png',
         ]);
 
         $addVariantResponse->assertRedirect(route('admin.products.edit', $product->slug));

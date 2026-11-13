@@ -95,7 +95,7 @@ class ProductController extends Controller
         }
 
         // Handle image
-        $imagePath = 'images/products/core-midnight.png';
+        $imagePath = 'images/products/core-forma-midnight.png';
         if ($request->hasFile('image_file')) {
             $file = $request->file('image_file');
             $fileName = time() . '_' . Str::slug($validated['sku']) . '.' . $file->getClientOriginalExtension();

@@ -78,7 +78,7 @@
                     @foreach($products as $product)
                         @php
                             $firstVariant = $product->variants->first();
-                            $imgSrc = $firstVariant?->image ? asset($firstVariant->image) : asset('images/products/core-midnight.png');
+                            $imgSrc = $firstVariant?->image ? asset($firstVariant->image) : asset('images/products/core-forma-midnight.png');
                             $totalStock = $product->variants->sum('stock');
                         @endphp
                         <tr>

@@ -53,7 +53,7 @@ class OrderHistoryTest extends TestCase
             'order_status' => 'pending',
         ], $overrides));
 
-        $variant = ProductVariant::where('sku', 'ALX-CORE-MID')->first() ?? ProductVariant::first();
+        $variant = ProductVariant::where('sku', 'ALX-FRM-MID')->first() ?? ProductVariant::first();
 
         OrderItem::create([
             'order_id' => $order->id,

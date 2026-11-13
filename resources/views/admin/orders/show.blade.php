@@ -68,7 +68,7 @@
                 <tbody>
                     @foreach($order->orderItems as $item)
                         @php
-                            $variantImg = $item->productVariant?->image ? asset($item->productVariant->image) : asset('images/products/core-midnight.png');
+                            $variantImg = $item->productVariant?->image ? asset($item->productVariant->image) : asset('images/products/core-forma-midnight.png');
                         @endphp
                         <tr>
                             <td>

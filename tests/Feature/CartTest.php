@@ -49,7 +49,7 @@ class CartTest extends TestCase
     public function test_authenticated_user_can_add_variant_to_cart(): void
     {
         $user = User::factory()->create();
-        $variant = ProductVariant::where('sku', 'ALX-CORE-MID')->first();
+        $variant = ProductVariant::where('sku', 'ALX-FRM-MID')->first();
 
         $response = $this->actingAs($user)->post(route('cart.items.store'), [
             'variant_id' => $variant->id,
@@ -67,7 +67,7 @@ class CartTest extends TestCase
 
         $cartResponse = $this->actingAs($user)->get(route('cart.index'));
         $cartResponse->assertStatus(200);
-        $cartResponse->assertSee('Alexa Core');
+        $cartResponse->assertSee('Alexa Forma');
         $cartResponse->assertSee('Midnight');
         $cartResponse->assertSee('Rp 899.000');
     }
@@ -78,7 +78,7 @@ class CartTest extends TestCase
     public function test_adding_same_variant_increases_quantity(): void
     {
         $user = User::factory()->create();
-        $variant = ProductVariant::where('sku', 'ALX-CORE-MID')->first();
+        $variant = ProductVariant::where('sku', 'ALX-FRM-MID')->first();
 
         // Add once
         $this->actingAs($user)->post(route('cart.items.store'), [
@@ -103,7 +103,7 @@ class CartTest extends TestCase
     public function test_cannot_add_inactive_variant(): void
     {
         $user = User::factory()->create();
-        $variant = ProductVariant::where('sku', 'ALX-CORE-MID')->first();
+        $variant = ProductVariant::where('sku', 'ALX-FRM-MID')->first();
         $variant->update(['status' => 'inactive']);
 
         $response = $this->actingAs($user)->post(route('cart.items.store'), [
@@ -123,7 +123,7 @@ class CartTest extends TestCase
     public function test_cannot_add_variant_when_parent_product_is_inactive(): void
     {
         $user = User::factory()->create();
-        $product = Product::where('slug', 'alexa-core')->first();
+        $product = Product::where('slug', 'alexa-forma')->first();
         $product->update(['status' => 'inactive']);
 
         $variant = $product->variants->first();
@@ -145,7 +145,7 @@ class CartTest extends TestCase
     public function test_cannot_exceed_available_stock_when_adding(): void
     {
         $user = User::factory()->create();
-        $variant = ProductVariant::where('sku', 'ALX-CORE-MID')->first();
+        $variant = ProductVariant::where('sku', 'ALX-FRM-MID')->first();
         $variant->update(['stock' => 5]);
 
         // Attempting to add 6 units when stock is 5
@@ -181,7 +181,7 @@ class CartTest extends TestCase
     public function test_can_update_cart_quantity(): void
     {
         $user = User::factory()->create();
-        $variant = ProductVariant::where('sku', 'ALX-CORE-MID')->first();
+        $variant = ProductVariant::where('sku', 'ALX-FRM-MID')->first();
 
         $cart = Cart::create(['user_id' => $user->id]);
         $item = $cart->cartItems()->create([
@@ -204,7 +204,7 @@ class CartTest extends TestCase
     public function test_cannot_update_quantity_beyond_stock(): void
     {
         $user = User::factory()->create();
-        $variant = ProductVariant::where('sku', 'ALX-CORE-MID')->first();
+        $variant = ProductVariant::where('sku', 'ALX-FRM-MID')->first();
         $variant->update(['stock' => 5]);
 
         $cart = Cart::create(['user_id' => $user->id]);
@@ -227,7 +227,7 @@ class CartTest extends TestCase
     public function test_can_remove_cart_item(): void
     {
         $user = User::factory()->create();
-        $variant = ProductVariant::where('sku', 'ALX-CORE-MID')->first();
+        $variant = ProductVariant::where('sku', 'ALX-FRM-MID')->first();
 
         $cart = Cart::create(['user_id' => $user->id]);
         $item = $cart->cartItems()->create([
@@ -250,7 +250,7 @@ class CartTest extends TestCase
         $user1 = User::factory()->create();
         $user2 = User::factory()->create();
 
-        $variant = ProductVariant::where('sku', 'ALX-CORE-MID')->first();
+        $variant = ProductVariant::where('sku', 'ALX-FRM-MID')->first();
 
         $cart1 = Cart::create(['user_id' => $user1->id]);
         $item1 = $cart1->cartItems()->create([
@@ -277,8 +277,8 @@ class CartTest extends TestCase
     public function test_cart_total_calculated_from_database_prices(): void
     {
         $user = User::factory()->create();
-        $coreVariant = ProductVariant::where('sku', 'ALX-CORE-MID')->first(); // 899000
-        $activeVariant = ProductVariant::where('sku', 'ALX-ACT-SNW')->first(); // 1099000
+        $coreVariant = ProductVariant::where('sku', 'ALX-FRM-MID')->first(); // 899000
+        $activeVariant = ProductVariant::where('sku', 'ALX-FLW-SNW')->first(); // 1099000
 
         $cart = Cart::create(['user_id' => $user->id]);
         $cart->cartItems()->create([
