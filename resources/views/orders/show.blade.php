@@ -330,12 +330,12 @@
 
                         @if($order->canBeShipped())
                             <p style="font-size: 0.8125rem; color: var(--color-text-muted); margin-bottom: 1rem; line-height: 1.6;">
-                                Payment is confirmed. You can now generate an automated courier shipment order via Biteship Sandbox.
+                                Payment is confirmed. You can now dispatch a shipment for this order.
                             </p>
                             <form action="{{ route('admin.orders.shipment.store', $order->order_number) }}" method="POST">
                                 @csrf
                                 <button type="submit" class="btn-editorial btn-editorial-primary" style="padding: 0.625rem 1.5rem; font-size: 0.75rem;" id="btn-admin-create-shipment">
-                                    Create Courier Shipment (Biteship Sandbox) &rarr;
+                                    Dispatch Shipment &rarr;
                                 </button>
                             </form>
                         @elseif($order->paymentStatus() !== 'paid')
@@ -344,7 +344,7 @@
                             </p>
                         @else
                             <p style="font-size: 0.8125rem; color: #15803D; line-height: 1.5; margin: 0;">
-                                &check; Shipment has already been generated (Biteship Order: <code>{{ $order->shipment?->biteship_order_id }}</code>).
+                                &check; Shipment has already been generated.
                             </p>
                         @endif
                     </div>

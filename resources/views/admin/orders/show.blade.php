@@ -127,11 +127,11 @@
             @endif
         </div>
 
-        <!-- Shipment & Biteship Monitoring Card -->
+        <!-- Shipment & Tracking Fulfillment Card -->
         <div class="card">
             <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 1.25rem;">
                 <h3 class="serif" style="font-size: 1.125rem; font-weight: 500;">
-                    Shipment &amp; Tracking (Biteship Sandbox)
+                    Shipment &amp; Tracking
                 </h3>
                 @if($order->shipment)
                     <span class="status-badge {{ $order->shipment->isDelivered() ? 'status-badge-delivered' : 'status-badge-shipped' }}">
@@ -151,10 +151,6 @@
                     <div>
                         <span style="font-size: 0.6875rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--color-text-muted); display: block;">Waybill (AWB)</span>
                         <strong style="font-family: monospace;">{{ $order->shipment->waybill_id ?: 'Awaiting Courier Assignment' }}</strong>
-                    </div>
-                    <div>
-                        <span style="font-size: 0.6875rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--color-text-muted); display: block;">Biteship Order ID</span>
-                        <code style="font-size: 0.75rem;">{{ $order->shipment->biteship_order_id }}</code>
                     </div>
                     <div>
                         <span style="font-size: 0.6875rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--color-text-muted); display: block;">Tracking URL</span>
@@ -194,7 +190,7 @@
                     <form action="{{ route('admin.orders.shipment.store', $order->order_number) }}" method="POST">
                         @csrf
                         <button type="submit" class="btn-editorial btn-editorial-primary" id="btn-admin-fulfill-order">
-                            Dispatch Shipment (Biteship Sandbox) &rarr;
+                            Dispatch Shipment &rarr;
                         </button>
                     </form>
                 @elseif($order->paymentStatus() !== 'paid')

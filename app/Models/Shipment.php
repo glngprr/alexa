@@ -18,8 +18,6 @@ class Shipment extends Model
     protected $fillable = [
         'order_id',
         'provider',
-        'biteship_order_id',
-        'biteship_tracking_id',
         'waybill_id',
         'courier_code',
         'courier_service',

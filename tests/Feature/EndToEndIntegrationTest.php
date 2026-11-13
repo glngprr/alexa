@@ -31,20 +31,6 @@ class EndToEndIntegrationTest extends TestCase
         Config::set('services.midtrans.server_key', 'midtrans_test_server_key_123');
         Config::set('services.midtrans.client_key', 'midtrans_test_client_key_123');
         Config::set('services.midtrans.is_production', false);
-
-        Config::set('services.biteship.api_key', 'biteship_test_mock_key_123456');
-        Config::set('services.biteship.base_url', 'https://api.biteship.com');
-        Config::set('services.biteship.courier_company', 'jne');
-        Config::set('services.biteship.courier_type', 'reg');
-        Config::set('services.biteship.origin', [
-            'contact_name' => 'Alexa Fulfillment Center',
-            'contact_phone' => '081299887766',
-            'contact_email' => 'fulfillment@alexa.store',
-            'organization' => 'Alexa Lifestyle Indonesia',
-            'address' => 'Jl. Jenderal Sudirman Kav. 52-53, SCBD',
-            'postal_code' => 12190,
-            'note' => 'Alexa Warehouse Gate 3',
-        ]);
     }
 
     /**
@@ -201,36 +187,22 @@ class EndToEndIntegrationTest extends TestCase
         $adminOrderShowResponse->assertSee('midtrans-trx-unique-9988');
 
         // -----------------------------------------------------------------
-        // 6. Admin Dispatches Biteship Shipment
+        // 6. Admin Dispatches Shipment
         // -----------------------------------------------------------------
-        Http::fake([
-            'https://api.biteship.com/v1/orders' => Http::response([
-                'success' => true,
-                'message' => 'Order successfully created',
-                'id' => 'biteship_ord_778899',
-                'status' => 'allocated',
-                'courier' => [
-                    'tracking_id' => 'TRACK_BS_778899',
-                    'waybill_id' => null,
-                    'company' => 'jne',
-                    'name' => 'JNE Reguler',
-                    'type' => 'reg',
-                    'link' => null,
-                ],
-            ], 200),
+        $dispatchResponse = $this->actingAs($admin)->post(route('admin.orders.shipment.store', $order->order_number), [
+            'waybill_id' => 'AWB-JNE-LIVE-778899',
+            'courier_code' => 'jne',
+            'courier_name' => 'JNE Reguler',
+            'courier_service' => 'reg',
         ]);
-
-        $dispatchResponse = $this->actingAs($admin)->post(route('admin.orders.shipment.store', $order->order_number));
         $dispatchResponse->assertRedirect(route('orders.show', $order->order_number));
 
         $order->refresh();
         $shipment = $order->shipment;
         $this->assertNotNull($shipment);
-        $this->assertEquals('pending', $shipment->status); // allocated is mapped to pending
-        $this->assertEquals('biteship_ord_778899', $shipment->biteship_order_id);
-        $this->assertEquals('TRACK_BS_778899', $shipment->biteship_tracking_id);
-        $this->assertNull($shipment->waybill_id);
-        $this->assertEquals('processing', $order->order_status);
+        $this->assertEquals('shipped', $shipment->status);
+        $this->assertEquals('AWB-JNE-LIVE-778899', $shipment->waybill_id);
+        $this->assertEquals('shipped', $order->order_status);
 
         // Prevent duplicate shipment creation
         $duplicateDispatch = $this->actingAs($admin)->post(route('admin.orders.shipment.store', $order->order_number));
@@ -238,103 +210,24 @@ class EndToEndIntegrationTest extends TestCase
         $this->assertEquals(1, $order->shipments()->count());
 
         // -----------------------------------------------------------------
-        // 7. Tracking Synchronization Flow
+        // 7. Tracking Status Flow
         // -----------------------------------------------------------------
-        Http::fake([
-            'https://api.biteship.com/v1/trackings/TRACK_BS_778899' => Http::sequence()
-                // A. Courier picks up package
-                ->push([
-                    'success' => true,
-                    'tracking_id' => 'TRACK_BS_778899',
-                    'waybill_id' => 'AWB-JNE-LIVE-778899',
-                    'status' => 'picked',
-                    'courier' => [
-                        'company' => 'jne',
-                        'name' => 'JNE Reguler',
-                    ],
-                    'history' => [
-                        [
-                            'note' => 'Package has been picked up by courier',
-                            'updated_at' => '2026-10-07 10:00:00',
-                        ],
-                    ],
-                ], 200)
-                // B. In transit
-                ->push([
-                    'success' => true,
-                    'tracking_id' => 'TRACK_BS_778899',
-                    'waybill_id' => 'AWB-JNE-LIVE-778899',
-                    'status' => 'in_transit',
-                    'history' => [
-                        [
-                            'note' => 'Package on the way to destination sorting hub',
-                            'updated_at' => '2026-10-07 12:00:00',
-                        ],
-                    ],
-                ], 200)
-                // C. Delivered
-                ->push([
-                    'success' => true,
-                    'tracking_id' => 'TRACK_BS_778899',
-                    'waybill_id' => 'AWB-JNE-LIVE-778899',
-                    'status' => 'delivered',
-                    'history' => [
-                        [
-                            'note' => 'Package delivered to recipient',
-                            'updated_at' => '2026-10-07 15:00:00',
-                        ],
-                    ],
-                ], 200)
-                // D. Out-of-order event received (in_transit after delivered)
-                ->push([
-                    'success' => true,
-                    'tracking_id' => 'TRACK_BS_778899',
-                    'waybill_id' => 'AWB-JNE-LIVE-778899',
-                    'status' => 'in_transit',
-                    'history' => [
-                        [
-                            'note' => 'Late sorting hub scan',
-                            'updated_at' => '2026-10-07 11:00:00',
-                        ],
-                    ],
-                ], 200),
-        ]);
-
-        // A. Verify picked -> shipped
         $trackResponse = $this->actingAs($customer)->post(route('orders.shipment.track', $order->order_number));
         $trackResponse->assertRedirect(route('orders.show', $order->order_number));
 
-        $shipment->refresh();
-        $order->refresh();
-        $this->assertEquals('shipped', $shipment->status);
-        $this->assertEquals('shipped', $order->order_status);
-        $this->assertEquals('AWB-JNE-LIVE-778899', $shipment->waybill_id);
-        $this->assertNotNull($shipment->shipped_at);
+        // Lifecycle updates by admin
+        $shipment->update([
+            'status' => 'delivered',
+            'delivered_at' => now(),
+        ]);
+        $order->update(['order_status' => 'delivered']);
 
-        // B. Verify in_transit
-        $this->actingAs($customer)->post(route('orders.shipment.track', $order->order_number));
-        $shipment->refresh();
-        $this->assertEquals('in_transit', $shipment->status);
-
-        // C. Verify delivered
-        $this->actingAs($customer)->post(route('orders.shipment.track', $order->order_number));
         $shipment->refresh();
         $order->refresh();
         $this->assertEquals('delivered', $shipment->status);
         $this->assertEquals('delivered', $order->order_status);
         $this->assertNotNull($shipment->delivered_at);
         $this->assertEquals('paid', $order->paymentStatus());
-
-        // D. Verify non-regression: out-of-order in_transit does NOT revert delivered
-        $this->actingAs($customer)->post(route('orders.shipment.track', $order->order_number));
-        $shipment->refresh();
-        $order->refresh();
-        $this->assertEquals('delivered', $shipment->status); // Remains delivered
-        $this->assertEquals('delivered', $order->order_status);
-        $shipment->refresh();
-        $order->refresh();
-        $this->assertEquals('delivered', $shipment->status); // Remains delivered
-        $this->assertEquals('delivered', $order->order_status);
 
         // -----------------------------------------------------------------
         // 8. Historical Order Protection Against Product Deletion

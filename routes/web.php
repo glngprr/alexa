@@ -42,7 +42,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/orders/{order}/payment', [PaymentController::class, 'pay'])->name('orders.payment');
     Route::post('/orders/{order}/payment/status', [PaymentController::class, 'checkStatus'])->name('orders.payment.status');
 
-    // Biteship Shipping & Tracking Actions
+    // Shipping & Tracking Actions
     Route::post('/orders/{order}/shipment/track', [TrackingController::class, 'refresh'])->name('orders.shipment.track');
 });
 

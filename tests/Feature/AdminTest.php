@@ -417,8 +417,7 @@ class AdminTest extends TestCase
         // Existing shipment
         Shipment::create([
             'order_id' => $order->id,
-            'provider' => 'biteship',
-            'biteship_order_id' => 'bs_existing_123',
+            'provider' => 'manual',
             'waybill_id' => 'AWB-123',
             'status' => 'shipped',
         ]);
